@@ -18,7 +18,10 @@ export default function Navbar() {
       initial={{ y: -40, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.35, ease: "easeOut" }}
-      className="w-full px-4 sm:px-6 py-3 flex items-center justify-between bg-white/80 dark:bg-gray-900/80 backdrop-blur-md shadow-sm sticky top-0 z-50"
+      className="w-full px-4 sm:px-6 py-3 flex items-center justify-between 
+  bg-white dark:bg-black 
+  transition-colors duration-300
+  sticky top-0 z-50 backdrop-blur-md shadow-sm"
     >
       {/* Left: Brand */}
       <Link
@@ -39,9 +42,9 @@ export default function Navbar() {
           <motion.span
             layout
             transition={{ type: "spring", stiffness: 500, damping: 30 }}
-            className={`inline-block h-5 w-5 rounded-full bg-white shadow-md transform ${
-              theme === "dark" ? "translate-x-5" : "translate-x-1"
-            }`}
+            initial={false}
+            animate={{ x: theme === "dark" ? 22 : 2 }}
+            className="inline-block h-5 w-5 rounded-full bg-white shadow-md shadow-md"
           />
           <span className="sr-only">Toggle dark mode</span>
         </button>
