@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar";
+import Footer from "./components/Footer.jsx";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import Upload from "./pages/Upload";
+import Pricing from "./pages/Pricing";
 import { ThemeProvider } from "./utils/theme.jsx";
 
 
@@ -14,6 +16,7 @@ function AppWrapper() {
   const location = useLocation();
   const hideNavbarRoutes = ["/login", "/register"];
   const shouldShowNavbar = !hideNavbarRoutes.includes(location.pathname);
+  const shouldShowFooter = !hideNavbarRoutes.includes(location.pathname);
 
   return (
     <>
@@ -26,8 +29,11 @@ function AppWrapper() {
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/upload" element={<Upload />} />
+          <Route path="/pricing" element={<Pricing />} />
         </Routes>
       </main>
+
+    {shouldShowFooter && <Footer/>}
     </>
   );
 }

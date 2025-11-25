@@ -28,6 +28,23 @@ export default function Navbar() {
         3DGen
       </Link>
 
+      <div className="hidden md:flex items-center gap-8 text-sm font-medium">
+        <a href="#features" className="hover:text-blue-500 transition">Features</a>
+        <Link to="/pricing" className="hover:text-blue-500 transition">Pricing</Link>
+        <a href="#solutions" className="hover:text-blue-500 transition">Solutions</a>
+        <a href="#community" className="hover:text-blue-500 transition">Community</a>
+        <a href="#resources" className="hover:text-blue-500 transition">Resources</a>
+      </div>
+
+
+      {/* <div className="hidden md:flex items-center gap-8 text-sm font-medium mr-6">
+        <a href="#features" className="hover:text-blue-500 transition">Features</a>
+        <a href="#pricing" className="hover:text-blue-500 transition">Pricing</a>
+        <a href="#solutions" className="hover:text-blue-500 transition">Solutions</a>
+        <a href="#community" className="hover:text-blue-500 transition">Community</a>
+        <a href="#resources" className="hover:text-blue-500 transition">Resources</a>
+      </div> */}
+
       {/* Right: Links + Theme Toggle */}
       <div className="flex items-center gap-4 sm:gap-6">
         {/* Theme Toggle Switch */}
@@ -39,9 +56,8 @@ export default function Navbar() {
           <motion.span
             layout
             transition={{ type: "spring", stiffness: 500, damping: 30 }}
-            className={`inline-block h-5 w-5 rounded-full bg-white shadow-md transform ${
-              theme === "dark" ? "translate-x-5" : "translate-x-1"
-            }`}
+            className={`inline-block h-5 w-5 rounded-full bg-white shadow-md transform ${theme === "dark" ? "translate-x-5" : "translate-x-1"
+              }`}
           />
           <span className="sr-only">Toggle dark mode</span>
         </button>
