@@ -1,5 +1,5 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -9,21 +9,35 @@ import Upload from "./pages/Upload";
 import { ThemeProvider } from "./utils/theme.jsx";
 
 
+// Wrapper to handle navbar condition using useLocation
+function AppWrapper() {
+  const location = useLocation();
+  const hideNavbarRoutes = ["/login", "/register"];
+  const shouldShowNavbar = !hideNavbarRoutes.includes(location.pathname);
+
+  return (
+    <>
+      {shouldShowNavbar && <Navbar />}
+
+      <main className="max-w-6xl mx-auto px-4 py-6">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/upload" element={<Upload />} />
+        </Routes>
+      </main>
+    </>
+  );
+}
+
 export default function App() {
   return (
     <ThemeProvider>
       <div className="min-h-screen">
         <Router>
-          {!["/login","/register"].includes(window.location.pathname) && <Navbar />}
-          <main className="max-w-6xl mx-auto px-4 py-6">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/upload" element={<Upload />} />
-            </Routes>
-          </main>
+          <AppWrapper />
         </Router>
       </div>
     </ThemeProvider>

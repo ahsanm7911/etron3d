@@ -70,12 +70,12 @@ export default function Navbar() {
             >
               Dashboard
             </Link>
-            <Link
+            <button
               to="/upload"
               className="text-sm font-medium px-3 py-1.5 rounded-full bg-blue-600 text-white hover:bg-blue-700 active:scale-95 transition-transform transition-colors"
             >
               Upload Image
-            </Link>
+            </button>
           </div>
         )}
       </div>
