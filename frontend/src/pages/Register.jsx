@@ -10,12 +10,17 @@ export default function Register() {
     const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [password2, setPassword2] = useState("");
     const [error, setError] = useState(null);
 
 
     async function handleRegister(e) {
         e.preventDefault();
         setError(null);
+        if (password !== password2) {
+            setError("Passwords donot match.")
+            return;
+        }
         try {
             const res = await api.post("/auth/register/", { email, password });
             auth.saveTokens(res.data.tokens.access, res.data.tokens.refresh);
@@ -64,6 +69,14 @@ export default function Register() {
                         placeholder="Password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        className="px-4 py-2 rounded-lg border dark:border-gray-700 dark:bg-gray-800"
+                        required
+                    />
+                    <input
+                        type="password"
+                        placeholder="Confirm Password"
+                        value={password2}
+                        onChange={(e) => setPassword2(e.target.value)}
                         className="px-4 py-2 rounded-lg border dark:border-gray-700 dark:bg-gray-800"
                         required
                     />

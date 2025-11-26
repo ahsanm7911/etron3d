@@ -72,14 +72,7 @@ export default function Login() {
                         className="px-4 py-2 rounded-lg border dark:border-gray-700 dark:bg-gray-800"
                         required
                     />
-                    <input
-                        type="password"
-                        placeholder="Confirm Password"
-                        value={password2}
-                        onChange={(e) => setPassword2(e.target.value)}
-                        className="px-4 py-2 rounded-lg border dark:border-gray-700 dark:bg-gray-800"
-                        required
-                    />
+                   
                     <motion.button whileTap={{ scale: 0.95 }} type="submit" className="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">Login</motion.button>
                 </form>
                 <div className="flex items-center text-gray-400 my-6">
