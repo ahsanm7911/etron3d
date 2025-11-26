@@ -10,17 +10,12 @@ export default function Login() {
     const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [password2, setPassword2] = useState("");
     const [error, setError] = useState(null);
 
 
     async function handleLogin(e) {
         e.preventDefault();
         setError(null);
-        if(password !== password2) {
-            setError("Passwords donot match.")
-            return;
-        }
         try {
             const res = await api.post("/auth/login/", { email, password });
             auth.saveTokens(res.data.tokens.access, res.data.tokens.refresh);
