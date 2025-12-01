@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import UploadedImage
+from .models import UploadedImage, GeneratedModel
 
 class UploadedImageSerializer(serializers.ModelSerializer):
     """
@@ -30,3 +30,15 @@ class UploadedImageSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Image size cannot exceed 10MB.")
 
         return value
+    
+class GeneratedModelSerializer(serializers.ModelSerializer):
+    """
+    Serializer for GeneratedModel instances.
+
+    The model_file is read-only because it is assigned on the server
+    side to a placeholder 3D asset.
+    """
+    class Meta:
+        model = GeneratedModel
+        fields = ["id", "input_image", "model_file", "status", "created_at"]
+        read_only_fields = ["model_file", "status", "created_at"]

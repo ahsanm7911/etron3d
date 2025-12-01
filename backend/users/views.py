@@ -32,7 +32,11 @@ def get_tokens_for_user(user):
         "access": str(refresh.access_token),
     }
 
-
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def test_endpoint(request):
+    print(f"Request: ", request)
+    return Response({"detail": "Authorized"})
 # ----------------------- Register -----------------------
 @api_view(["POST"])
 @permission_classes([AllowAny])
@@ -89,6 +93,8 @@ def google_login_view(request):
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def logout_view(request):
+    print("Request: ", request)
+    print(f"Request body: {request.body}")
     refresh_token = request.data.get("refresh")
 
     try:

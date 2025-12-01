@@ -1,10 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { auth } from "../utils/auth";
 
 export default function Home() {
     const navigate = useNavigate();
+
+    const checkAuth = () => {
+        const user = auth.getUser();
+        if (user) return navigate("/dashboard");
+    }
+
+    useEffect(() => {
+        checkAuth();
+    }, [])
 
     function handleGenerate() {
         const user = auth.getUser();

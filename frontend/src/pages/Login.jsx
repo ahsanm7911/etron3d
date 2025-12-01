@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import api from "../utils/api";
 import { auth } from "../utils/auth";
-import { FaBeer } from 'react-icons/fa'
+import { AppContext } from "../contexts/AppContext";
 import { FcGoogle } from "react-icons/fc";
 
 export default function Login() {
@@ -11,6 +11,7 @@ export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState(null);
+    const { setUser } = useContext(AppContext);
 
 
     async function handleLogin(e) {
@@ -19,7 +20,7 @@ export default function Login() {
         try {
             const res = await api.post("/auth/login/", { email, password });
             auth.saveTokens(res.data.tokens.access, res.data.tokens.refresh);
-            auth.saveUser(res.data.user);
+            setUser(res.data.user);
             navigate("/dashboard");
         } catch (err) {
             setError("Invalid email or password.");
@@ -28,7 +29,7 @@ export default function Login() {
 
     function handleGoogleLogin() {
         // Redirect to backend Google OAuth endpoint
-        window.location.href = `${import.meta.env.VITE_API_URL}/auth/google/start/`;
+        window.location.href = `http://localhost:8000/api/auth/google/`;
     }
 
     return (

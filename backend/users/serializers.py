@@ -9,7 +9,7 @@ User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("id", "email", "first_name", "last_name", "google_id")
+        fields = ("id", "email", "first_name", "last_name", "google_id", "credits", "plan")
 
 
 # ---------------- REGISTER ----------------
@@ -31,7 +31,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("id", "email", "first_name", "last_name", "google_id")
+        fields = ("id", "email", "first_name", "last_name", "google_id", "credits", "plan")
         read_only_fields = ("email", "google_id")
 
 

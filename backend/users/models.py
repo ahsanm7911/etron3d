@@ -35,10 +35,18 @@ class UserManager(BaseUserManager):
         return self._create_user(email, password, **extra_fields)
     
 class User(AbstractUser):
+    PLAN_CHOICES = [
+        ('free', 'Free'),
+        ('pro', 'Pro'),
+        ('studio', 'Studio'),
+        ('enterprise', 'Enterprise'),
+    ]
     username = None
     email = models.EmailField(unique=True)
 
     google_id = models.CharField(max_length=255, blank=True, null=True)
+    plan = models.CharField(choices=PLAN_CHOICES, default='free')
+    credits = models.PositiveIntegerField(default=100)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []   # no extra required fields for createsuperuser
