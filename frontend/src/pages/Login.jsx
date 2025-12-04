@@ -29,7 +29,7 @@ export default function Login() {
 
     function handleGoogleLogin() {
         // Redirect to backend Google OAuth endpoint
-        window.location.href = `http://localhost:8000/api/auth/google/`;
+        window.location.href = `http://localhost:8000/api/auth/google/login/`;
     }
 
     return (
