@@ -78,7 +78,8 @@ export default function Navbar() {
       {/* Right: Links + Theme Toggle */}
       <div className="flex items-center gap-4 sm:gap-6">
         {/* Theme Toggle Switch */}
-        <button
+        
+        {/* <button
           onClick={toggleTheme}
           aria-label="Toggle dark mode"
           className="relative inline-flex h-7 w-12 items-center rounded-full bg-gray-200 dark:bg-gray-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-transparent"
@@ -90,7 +91,7 @@ export default function Navbar() {
               }`}
           />
           <span className="sr-only">Toggle dark mode</span>
-        </button>
+        </button> */}
 
         {/* Auth Links */}
         {!user ? (

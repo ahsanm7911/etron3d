@@ -161,3 +161,8 @@ SIMPLE_JWT = {
 GOOGLE_CLIENT_ID=os.getenv("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET=os.getenv("GOOGLE_CLIENT_SECRET")
 GOOGLE_REDIRECT_URI=os.getenv("GOOGLE_REDIRECT_URI")
+
+STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
+STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY", "pk_test_dummy_publishable")
+STRIPE_SUCCESS_URL = "http://localhost:5173/dashboard?status=success"   # React success redirect
+STRIPE_CANCEL_URL = "http://localhost:5173/pricing?status=cancelled"

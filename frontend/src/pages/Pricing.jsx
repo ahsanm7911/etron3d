@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { motion } from 'framer-motion';
+import api from '../utils/api';
+import { auth } from "../utils/auth";
 
 export default function Pricing() {
-
     const [billing, setBilling] = useState("monthly");
+
 
 
     const prices = {
@@ -20,6 +22,27 @@ export default function Pricing() {
             enterprise: 990,
         },
     };
+
+    const PRICE_IDS = {
+        pro: "1",
+        studio: "2",
+        enterprise: "3"
+    }
+
+    function handleSubscribe (url) {
+        try {
+            console.log("calling handleSub");
+            const user = auth.getUser();
+            if (!user) {
+                alert("You must be logged in to subscribe.");
+                return;
+            }
+            window.location.href = url;
+
+        } catch (error) {
+            console.log("Checkout error: ", error);
+        }
+    }
 
 
     return (
@@ -67,7 +90,8 @@ export default function Pricing() {
                 <motion.div whileHover={{ scale: 1.03 }} className="p-6 bg-white dark:bg-gray-900 rounded-2xl shadow-xl border border-blue-500">
                     <h3 className="text-2xl font-bold mb-3">Pro</h3>
                     <p className="text-4xl font-extrabold mb-6">${prices[billing].pro}</p>
-                    <button className="my-6 w-full py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition">Subscribe Now</button>
+                    <button className="my-6 w-full py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition"
+                        onClick={() => handleSubscribe("https://buy.stripe.com/7sY00k9bA44X9qefwC6Vq0a")}>Subscribe Now</button>
                     <ul className="text-sm text-left space-y-3">
                         <li>✔ 150 Credits / month</li>
                         <li>✔ Faster Queue Priority</li>
@@ -81,7 +105,7 @@ export default function Pricing() {
                 <motion.div whileHover={{ scale: 1.03 }} className="p-6 bg-white dark:bg-gray-900 rounded-2xl shadow-xl border border-purple-500">
                     <h3 className="text-2xl font-bold mb-3">Studio</h3>
                     <p className="text-4xl font-extrabold mb-6">${prices[billing].studio}</p>
-                    <button className="my-6 w-full py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition">Subscribe Now</button>
+                    <button className="my-6 w-full py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition" onClick={() => handleSubscribe("https://buy.stripe.com/aFa3cwcnM591bym0BI6Vq0b")}>Subscribe Now</button>
                     <ul className="text-sm text-left space-y-3">
                         <li>✔ 500 Credits / month</li>
                         <li>✔ High Priority Queue</li>
