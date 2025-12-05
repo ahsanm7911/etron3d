@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect} from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import api from "../utils/api";
@@ -12,6 +12,13 @@ export default function Login() {
     const [password, setPassword] = useState("");
     const [error, setError] = useState(null);
     const { setUser } = useContext(AppContext);
+
+    useEffect(() => {
+        const user = auth.getUser();
+        if(user) {
+            navigate('/dashboard');
+        }
+    })
 
 
     async function handleLogin(e) {

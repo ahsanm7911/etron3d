@@ -1,19 +1,20 @@
 import React, { useState } from "react";
 import { motion } from 'framer-motion';
+import { useNavigate } from "react-router-dom";
 import api from '../utils/api';
 import { auth } from "../utils/auth";
 
 export default function Pricing() {
     const [billing, setBilling] = useState("monthly");
-
+    const navigate = useNavigate();
 
 
     const prices = {
         monthly: {
             free: 0,
             pro: 9,
-            studio: 29,
-            enterprise: 99,
+            studio: 49,
+            enterprise: "Get a Quote!",
         },
         yearly: {
             free: 0,
@@ -76,7 +77,7 @@ export default function Pricing() {
                 <motion.div whileHover={{ scale: 1.03 }} className="p-6 bg-white dark:bg-gray-900 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700">
                     <h3 className="text-2xl font-bold mb-3">Free</h3>
                     <p className="text-4xl font-extrabold mb-6">${prices[billing].free}</p>
-                    <button className="my-6 w-full py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition">Get Started</button>
+                    <button className="my-6 w-full py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition" onClick={() => navigate('/login')}>Get Started</button>
                     <ul className="text-sm text-left space-y-3">
                         <li>✔ 10 Credits / month</li>
                         <li>✔ Standard Queue Speed</li>
@@ -118,7 +119,7 @@ export default function Pricing() {
                 {/* Enterprise */}
                 <motion.div whileHover={{ scale: 1.03 }} className="p-6 bg-white dark:bg-gray-900 rounded-2xl shadow-xl border border-yellow-500">
                     <h3 className="text-2xl font-bold mb-3">Enterprise</h3>
-                    <p className="text-4xl font-extrabold mb-6">${prices[billing].enterprise}</p>
+                    <p className="text-2xl mb-7">{prices[billing].enterprise}</p>
                     <button className="my-6 w-full py-2 rounded-lg bg-yellow-500 text-black hover:bg-yellow-600 transition">Contact Us</button>
                     <ul className="text-sm text-left space-y-3">
                         <li>✔ Unlimited Credits</li>
