@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+
 # Create your models here.
 
 
@@ -12,6 +13,7 @@ def upload_image_path(instance, filename):
     """
     return f"uploads/{instance.user.id}/input/{filename}"
 
+
 class UploadedImage(models.Model):
     """
     Stores uploaded images from users before they are processed
@@ -19,14 +21,17 @@ class UploadedImage(models.Model):
     """
 
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="uploaded_images"
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="uploaded_images",
     )
     image = models.ImageField(upload_to=upload_image_path)
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Image {self.id} uploaded by {self.user.email}"
-    
+
+
 class GeneratedModel(models.Model):
     """
     Stores a single 3D generation job.
@@ -36,17 +41,18 @@ class GeneratedModel(models.Model):
     - model_file: a placeholder 3D file (e.g. a static .glb placed in MEDIA_ROOT).
     - status: simple status field ("completed" for placeholder).
     """
+
     STATUS_CHOICES = [
         ("pending", "Pending"),
         ("processing", "Processing"),
         ("completed", "Completed"),
-        ("failed", "Failed")
+        ("failed", "Failed"),
     ]
 
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name="generated_models"
+        related_name="generated_models",
     )
     input_image = models.ImageField(upload_to="input_images/")
     model_file = models.FileField(upload_to="models/", blank=True, null=True)
@@ -57,3 +63,4 @@ class GeneratedModel(models.Model):
 
     def __str__(self) -> str:
         return f"GeneratedModel #{self.pk} for {self.user.email.split('@')[0]}"
+
