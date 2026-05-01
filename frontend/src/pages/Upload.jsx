@@ -34,6 +34,7 @@ export default function Upload() {
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
+
     const checkAuth = () => {
         const user = auth.getUser();
         if(!user) return navigate("/");
@@ -103,8 +104,9 @@ export default function Upload() {
             setResultFile(res.data.file_url || res.data.data?.model_file);
 
         } catch (err) {
-            console.error("Upload error: ", err);
-            setError("Failed to process image. Please try again.");
+            let errMsg = err.response?.data.detail || "Internal server error.";
+            console.error("Upload error: ", errMsg);
+            setError(errMsg);
         } finally {
             setLoading(false);
             if (progressInterval) {

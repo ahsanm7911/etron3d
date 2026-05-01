@@ -9,11 +9,13 @@ from users.models import User
 from users.serializers import UserSerializer
 from .serializers import UploadedImageSerializer, GeneratedModelSerializer
 from django.conf import settings
-import os 
+import os
 
 # Create your views here.
+GENERATION_COST = settings.MODEL_GENERATION_COST
 
-@api_view(['POST'])
+
+@api_view(["POST"])
 @permission_classes([IsAuthenticated])
 @parser_classes([MultiPartParser, FormParser])
 def upload_image_view(request):
@@ -25,7 +27,7 @@ def upload_image_view(request):
         - Validates file format (jpg/png/webp) and size (max 10MB).
         - Saves the image under the user's directory.
         - Returns the uploaded image metadata (ID, URL, timestamp).
-    
+
     Expected Input:
         image: <IMAGE_FILE>
 
@@ -44,7 +46,7 @@ def upload_image_view(request):
     if serializer.is_valid():
         serializer.save(user=request.user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-    
+
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -64,10 +66,10 @@ def image_to_3d_placeholder_view(request):
     placeholder .glb/.obj file placed in MEDIA_ROOT/models/.
     """
     user = request.user
-    if user.credits < 1:
+    if user.credits < GENERATION_COST:
         return Response(
-            {"detail": "out of credits."}, 
-            status=status.HTTP_400_BAD_REQUEST
+            {"detail": "Insufficient credits. Please upgrade your plan."},
+            status=status.HTTP_402_PAYMENT_REQUIRED,
         )
 
     image = request.FILES.get("image")
@@ -85,12 +87,12 @@ def image_to_3d_placeholder_view(request):
         status="completed",  # since it's placeholder for now
     )
 
-    # Deduct user credits 
+    # Deduct user credits
     user.credits -= 10
     user.save()
 
     # Attach placeholder 3D file (you must put this file in MEDIA_ROOT/models/)
-    placeholder_rel_path = "models/placeholder.glb"  # or .obj, etc.
+    placeholder_rel_path = "models/placeholder.obj"  # or .obj, etc.
     placeholder_abs_path = os.path.join(settings.MEDIA_ROOT, placeholder_rel_path)
 
     # Make sure the placeholder file exists in your MEDIA_ROOT/models directory
@@ -117,7 +119,7 @@ def image_to_3d_placeholder_view(request):
             "detail": "3D model generated (placeholder).",
             "data": serializer.data,
             "file_url": file_url,
-            "user": user_serializer.data
+            "user": user_serializer.data,
         },
         status=status.HTTP_201_CREATED,
     )

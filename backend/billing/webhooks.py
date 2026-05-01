@@ -9,6 +9,7 @@ def handle_webhook(payload, sig_header):
     Verifies and dispatches Stripe webhook events.
     Returns (response_data, http_status).
     """
+    print("handle_webhook called.")
     try:
         event = stripe.Webhook.construct_event(
             payload, sig_header, settings.STRIPE_WEBHOOK_SECRET
@@ -18,19 +19,28 @@ def handle_webhook(payload, sig_header):
     except stripe.error.SignatureVerificationError:
         return {"error": "Invalid signature"}, 400
 
+    print("Passed the try_except block")
     event_type = event["type"]
+    print(f"EVENT TYPE: {event_type}")
     data = event["data"]["object"]
 
     if event_type == "checkout.session.completed":
+        print("Calling checkout session complete handler")
         _handle_checkout_completed(data)
 
+    if event_type == "invoice.payment_succeeded":
+        print("Calling invoice_payment_succeeded handler")
+
     elif event_type == "invoice.paid":
+        print("Calling invoice_paid handler")
         _handle_invoice_paid(data)
 
     elif event_type == "invoice.payment_failed":
+        print("Calling payment_failed handler")
         _handle_payment_failed(data)
 
     elif event_type == "customer.subscription.deleted":
+        print("Calling subscription deleted handler")
         _handle_subscription_deleted(data)
 
     return {"status": "ok"}, 200

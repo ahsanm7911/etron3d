@@ -29,15 +29,14 @@ def create_checkout_session(user, plan_key):
     Creates a Stripe Checkout Session for the given plan.
     Returns the session URL to redirect the user to.
     """
-    subscription, _ = (
-        user.subscription if hasattr(user, "subscription") else (None, None)
-    )
-
+    print("Calling create_checkout_session")
+    # subscription, _ = (
+    #     user.subscription if hasattr(user, "subscription") else (None, None)
+    # )
     # Fetch or create subscription row
-    from billing.models import Subscription
+    from .models import Subscription
 
     subscription, _ = Subscription.objects.get_or_create(user=user)
-
     price_id = settings.STRIPE_PRICE_IDS.get(plan_key)
     if not price_id:
         raise ValueError(f"No price ID configured for plan: {plan_key}")

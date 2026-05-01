@@ -12,6 +12,7 @@ from . import services
 from .webhooks import handle_webhook
 from .models import Subscription
 from .serializers import SubscriptionSerializer
+from pprint import pprint
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -46,6 +47,7 @@ class CheckoutSessionView(APIView):
 
     def post(self, request):
         plan_key = request.data.get("plan")
+        print(f"PLAN KEY: {plan_key}")
         if plan_key not in settings.STRIPE_PRICE_IDS:
             return Response(
                 {"error": f"Invalid plan: {plan_key}"},
@@ -55,6 +57,7 @@ class CheckoutSessionView(APIView):
             url = services.create_checkout_session(request.user, plan_key)
             return Response({"checkout_url": url})
         except Exception as e:
+            print(f"ERROR IN CHECKOUT: {e}")
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -100,6 +103,7 @@ class StripeWebhookView(APIView):
     authentication_classes = []
 
     def post(self, request):
+        print("WEBHOOK RECEIVED")
         payload = request.body
         sig_header = request.META.get("HTTP_STRIPE_SIGNATURE")
         data, http_status = handle_webhook(payload, sig_header)

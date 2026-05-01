@@ -1,40 +1,40 @@
 // src/hooks/useBilling.js
 import { useState } from 'react';
-import api from '../api/axios'; // your existing axios instance with JWT headers
+import api from '../utils/api'; // your existing axios instance with JWT headers
 
 export function useBilling() {
-  const [loading, setLoading] = useState(false);
-  const [error, setError]     = useState(null);
+  const [bLoading, setBLoading] = useState(false);
+  const [bError, setBError]     = useState(null);
 
   const subscribe = async (plan) => {
-    setLoading(true);
-    setError(null);
+    setBLoading(true);
+    setBError(null);
     try {
-      const { data } = await api.post('/api/billing/checkout/', { plan });
+      const { data } = await api.post('/billing/checkout/', { plan });
       window.location.href = data.checkout_url; // redirect to Stripe
     } catch (err) {
-      setError(err.response?.data?.error || 'Something went wrong.');
+      setBError(err.response?.data?.error || 'Something went wrong.');
     } finally {
-      setLoading(false);
+      setBLoading(false);
     }
   };
 
   const openBillingPortal = async () => {
-    setLoading(true);
+    setBLoading(true);
     try {
-      const { data } = await api.post('/api/billing/portal/');
+      const { data } = await api.post('/billing/portal/');
       window.location.href = data.portal_url;
     } catch (err) {
-      setError(err.response?.data?.error || 'Something went wrong.');
+      setBError(err.response?.data?.error || 'Something went wrong.');
     } finally {
-      setLoading(false);
+      setBLoading(false);
     }
   };
 
   const fetchStatus = async () => {
-    const { data } = await api.get('/api/billing/status/');
+    const { data } = await api.get('/billing/status/');
     return data; // { plan, status, current_period_end, credits_remaining }
   };
 
-  return { subscribe, openBillingPortal, fetchStatus, loading, error };
+  return { subscribe, openBillingPortal, fetchStatus, bLoading, bError };
 }

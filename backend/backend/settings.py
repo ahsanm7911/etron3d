@@ -68,6 +68,7 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt.token_blacklist",
     "users",
     "generation",
+    "billing",
 ]
 
 MIDDLEWARE = [
@@ -182,6 +183,8 @@ GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
 GOOGLE_REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI")
 
+MODEL_GENERATION_COST = 10
+
 STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
 STRIPE_PUBLISHABLE_KEY = os.getenv(
     "STRIPE_PUBLISHABLE_KEY", "pk_test_dummy_publishable"
@@ -190,4 +193,3 @@ STRIPE_SUCCESS_URL = (
     "http://localhost:5173/dashboard?status=success"  # React success redirect
 )
 STRIPE_CANCEL_URL = "http://localhost:5173/pricing?status=cancelled"
-
