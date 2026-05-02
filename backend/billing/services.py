@@ -1,7 +1,6 @@
 import stripe
 from django.conf import settings
-from django.utils import timezone
-from datetime import datetime
+from datetime import datetime, timezone
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -127,8 +126,9 @@ def activate_subscription(
 
     # Refresh the user's credits to the new plan's quota
     credits = settings.PLAN_CREDITS.get(plan_key, 0)
+    user.plan = plan_key
     user.credits = credits  # assumes `credits` field on your User model
-    user.save(update_fields=["credits"])
+    user.save(update_fields=["credits", "plan"])
 
 
 def refresh_credits_on_renewal(stripe_subscription_id):

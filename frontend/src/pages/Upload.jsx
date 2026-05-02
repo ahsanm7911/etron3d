@@ -9,19 +9,8 @@ import api from '../utils/api';
 import { auth } from '../utils/auth';
 import { AppContext } from '../contexts/AppContext';
 import { useNavigate } from 'react-router-dom';
+import ModelViewer from '../components/ModelViewver.jsx';
 
-const ModelViewer = ({ url }) => {
-    const gltf = useLoader(GLTFLoader, url);
-    const model = gltf.scene;
-    
-
-    // Optional rotation animation 
-    useFrame(() => {
-        model.rotation.y += 0.003;
-    });
-
-    return <primitive object={model} scale={1.4} />
-}
 
 export default function Upload() {
     const [file, setFile] = useState(null);
@@ -101,6 +90,7 @@ export default function Upload() {
             });
             setUser(res.data.user);
             setProgress(100);
+            console.log("FILE_URL: ", res.data.file_url);
             setResultFile(res.data.file_url || res.data.data?.model_file);
 
         } catch (err) {
@@ -196,47 +186,7 @@ export default function Upload() {
             )}
 
             {/* Result Section */}
-            {resultFile && !loading && (
-                <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="mt-12 p-6 bg-white dark:bg-gray-900 rounded-xl shadow-md"
-                >
-                    <h2 className="text-xl font-bold mb-3">Your 3D Model Preview</h2>
-
-                    {/* 3D Viewer */}
-                    <div className="w-full h-[400px] rounded-xl overflow-hidden bg-gray-200 dark:bg-gray-800 mb-6">
-                        <Canvas camera={{ position: [2, 2, 3], fov: 50 }}>
-                            <ambientLight intensity={0.5} />
-                            <directionalLight intensity={1} position={[5, 5, 5]} />
-                            <Suspense fallback={null}>
-                                <ModelViewer url={resultFile} />
-                            </Suspense>
-                            <OrbitControls enablePan={true} enableZoom={true} />
-                            <Environment preset="studio" />
-                        </Canvas>
-                    </div>
-
-                    {/* Buttons */}
-                    <div className="flex justify-center gap-4">
-                        <a
-                            href={resultFile}
-                            download
-                            className="px-6 py-2 rounded-full bg-green-600 text-white hover:bg-green-700 transition"
-                        >
-                            Download Model
-                        </a>
-
-                        <button
-                            onClick={handleUpload}
-                            className="px-6 py-2 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition"
-                        >
-                            Retry Generation
-                        </button>
-                    </div>
-                </motion.div>
-            )}
-
+            {resultFile && <ModelViewer url={resultFile}/>}
         </div>
     )
 }

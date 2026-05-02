@@ -25,7 +25,6 @@ def handle_webhook(payload, sig_header):
     data = event["data"]["object"]
 
     if event_type == "checkout.session.completed":
-        print("Calling checkout session complete handler")
         _handle_checkout_completed(data)
 
     if event_type == "invoice.payment_succeeded":
@@ -50,6 +49,7 @@ def handle_webhook(payload, sig_header):
 
 
 def _handle_checkout_completed(session):
+    print("Calling handle_checkout_completed")
     user_id = session["metadata"].get("user_id")
     plan_key = session["metadata"].get("plan")
     sub_id = session.get("subscription")
@@ -59,12 +59,14 @@ def _handle_checkout_completed(session):
 
     # Fetch the full subscription object to get period end
     stripe_sub = stripe.Subscription.retrieve(sub_id)
-    period_end = stripe_sub["current_period_end"]
+
+    period_end = stripe_sub["items"]["data"][0]["current_period_end"]
 
     activate_subscription(user_id, plan_key, sub_id, period_end)
 
 
 def _handle_invoice_paid(invoice):
+    print("Calling invoice_paid")
     sub_id = invoice.get("subscription")
     if sub_id:
         refresh_credits_on_renewal(sub_id)

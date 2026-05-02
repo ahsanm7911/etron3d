@@ -18,8 +18,8 @@ export default function Navbar() {
   const navigate = useNavigate();
   const { user, setUser } = useContext(AppContext);
   const username = user ? user?.email.split('@')[0] : "";
-  const credits = user ? user?.credits : "";
-  const plan = user ? user?.plan.toUpperCase() : "";
+  const credits = user ? user?.subscription.credits_remaining : "";
+  const plan = user ? user?.subscription.plan.toUpperCase() : "";
 
 
   const handleLogout = () => {

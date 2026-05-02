@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-
+from users.serializers import User, UserSerializer
 from . import services
 from .webhooks import handle_webhook
 from .models import Subscription
@@ -87,8 +87,7 @@ class SubscriptionStatusView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        subscription, _ = Subscription.objects.get_or_create(user=request.user)
-        serializer = SubscriptionSerializer(subscription)
+        serializer = UserSerializer(request.user)
         return Response(serializer.data)
 
 

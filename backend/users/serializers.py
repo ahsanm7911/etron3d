@@ -1,15 +1,18 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
+from billing.serializers import SubscriptionSerializer
 
 User = get_user_model()
 
 
 # ---------------- USER SERIALIZER ----------------
 class UserSerializer(serializers.ModelSerializer):
+    subscription = SubscriptionSerializer(read_only=True)
+
     class Meta:
         model = User
-        fields = ("id", "email", "first_name", "last_name", "google_id", "credits", "plan")
+        fields = ("id", "email", "first_name", "last_name", "google_id", "subscription")
 
 
 # ---------------- REGISTER ----------------
@@ -31,7 +34,15 @@ class RegisterSerializer(serializers.ModelSerializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("id", "email", "first_name", "last_name", "google_id", "credits", "plan")
+        fields = (
+            "id",
+            "email",
+            "first_name",
+            "last_name",
+            "google_id",
+            "credits",
+            "plan",
+        )
         read_only_fields = ("email", "google_id")
 
 
