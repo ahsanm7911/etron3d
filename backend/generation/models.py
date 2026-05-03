@@ -55,6 +55,7 @@ class GeneratedModel(models.Model):
         related_name="generated_models",
     )
     input_image = models.ImageField(upload_to="input_images/")
+    task_id = models.CharField(max_length=1000, blank=True, null=True)
     model_file = models.FileField(upload_to="models/", blank=True, null=True)
     status = models.CharField(
         max_length=20, choices=STATUS_CHOICES, default="completed"
@@ -63,4 +64,3 @@ class GeneratedModel(models.Model):
 
     def __str__(self) -> str:
         return f"GeneratedModel #{self.pk} for {self.user.email.split('@')[0]}"
-

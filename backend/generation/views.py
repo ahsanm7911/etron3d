@@ -10,9 +10,18 @@ from users.serializers import UserSerializer
 from .serializers import UploadedImageSerializer, GeneratedModelSerializer
 from django.conf import settings
 import os
+import base64
+from .services import generator
 
 # Create your views here.
 GENERATION_COST = settings.MODEL_GENERATION_COST
+
+
+def file_to_base64(file):
+    """Convert UploadedFile to base64 safely"""
+    file.seek(0)  # Reset file pointer
+    file_content = file.read()
+    return base64.b64encode(file_content).decode("utf-8")
 
 
 @api_view(["POST"])
@@ -73,6 +82,7 @@ def image_to_3d_placeholder_view(request):
         )
 
     image = request.FILES.get("image")
+    image = file_to_base64(image)
 
     if not image:
         return Response(
@@ -80,6 +90,18 @@ def image_to_3d_placeholder_view(request):
             status=status.HTTP_400_BAD_REQUEST,
         )
 
+    """
+    try:
+        generation_request_response = generator.request_generation_by_image(image)
+    except Exception as e:
+        print(f"Generation Error: {e}")
+        return Response(
+            {"detail": "Generation service error"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+    task_id = generation_request_response["task_id"]
+    """
     # Create the GeneratedModel with the input image
     generated = GeneratedModel.objects.create(
         user=user,
@@ -92,7 +114,7 @@ def image_to_3d_placeholder_view(request):
     user.save()
 
     # Attach placeholder 3D file (you must put this file in MEDIA_ROOT/models/)
-    placeholder_rel_path = "models/placeholder2.glb"  # or .obj, etc.
+    placeholder_rel_path = "models/placeholder3.glb"  # or .obj, etc.
     placeholder_abs_path = os.path.join(settings.MEDIA_ROOT, placeholder_rel_path)
 
     # Make sure the placeholder file exists in your MEDIA_ROOT/models directory

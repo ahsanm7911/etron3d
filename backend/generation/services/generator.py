@@ -3,8 +3,10 @@ import os
 import requests
 from dotenv import load_dotenv
 from pprint import pprint
+import base64
 
 load_dotenv()
+
 
 api_key = os.getenv("AISTUDIO_API_KEY")
 base_url = "https://api.3daistudio.com/"
@@ -22,10 +24,20 @@ def setup():
     res.raise_for_status()
 
 
-def request_generate():
+def request_generation_by_prompt(prompt):
     ep = "v1/3d-models/tencent/generate/rapid/"
     url = base_url + ep
-    data = {"prompt": "a turtoise shell sunglasses", "enable_pbr": True}
+    data = {"prompt": prompt, "enable_pbr": True}
+    res = requests.post(url, headers=headers, json=data)
+    if res.status_code == 200:
+        return res.json()
+    res.raise_for_status()
+
+
+def request_generation_by_image(image):
+    ep = "v1/3d-models/tencent/generate/rapid/"
+    url = base_url + ep
+    data = {"image": image, "enable_pbr": False, "enable_geometry": True}
     res = requests.post(url, headers=headers, json=data)
     if res.status_code == 200:
         return res.json()
