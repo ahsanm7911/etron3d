@@ -92,7 +92,7 @@ def image_to_3d_placeholder_view(request):
     user.save()
 
     # Attach placeholder 3D file (you must put this file in MEDIA_ROOT/models/)
-    placeholder_rel_path = "models/placeholder.obj"  # or .obj, etc.
+    placeholder_rel_path = "models/placeholder2.glb"  # or .obj, etc.
     placeholder_abs_path = os.path.join(settings.MEDIA_ROOT, placeholder_rel_path)
 
     # Make sure the placeholder file exists in your MEDIA_ROOT/models directory

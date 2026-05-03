@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { motion } from 'framer-motion';
-import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import { OrbitControls, Environment } from '@react-three/drei';
 import { GLTFLoader } from 'three/examples/jsm/Addons.js';
 import { Suspense } from 'react';
@@ -9,7 +8,8 @@ import api from '../utils/api';
 import { auth } from '../utils/auth';
 import { AppContext } from '../contexts/AppContext';
 import { useNavigate } from 'react-router-dom';
-import ModelViewer from '../components/ModelViewver.jsx';
+// import ModelViewer from '../components/ModelViewerOBJ.jsx';
+import ModelViewer from '../components/ModelViewerGLTF.jsx';
 
 
 export default function Upload() {
