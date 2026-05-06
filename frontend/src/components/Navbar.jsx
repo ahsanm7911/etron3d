@@ -57,6 +57,8 @@ export default function Navbar() {
       >
         3DGen
       </Link>
+      
+      {!user ? (
 
       <div className="hidden md:flex items-center gap-8 text-sm font-medium">
         <a href="#features" className="hover:text-blue-500 transition">Features</a>
@@ -65,6 +67,11 @@ export default function Navbar() {
         <a href="#community" className="hover:text-blue-500 transition">Community</a>
         <a href="#resources" className="hover:text-blue-500 transition">Resources</a>
       </div>
+      ) : (
+        <div className="hidden md:flex items-center gap-8 text-sm font-medium">
+            <Link to="/assets" className="hover:text-blue-500 transition">Your Assets</Link>
+        </div>
+      )}
 
 
       {/* <div className="hidden md:flex items-center gap-8 text-sm font-medium mr-6">
@@ -79,19 +86,19 @@ export default function Navbar() {
       <div className="flex items-center gap-4 sm:gap-6">
         {/* Theme Toggle Switch */}
         
-        {/* <button
-          onClick={toggleTheme}
-          aria-label="Toggle dark mode"
-          className="relative inline-flex h-7 w-12 items-center rounded-full bg-gray-200 dark:bg-gray-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-transparent"
-        >
-          <motion.span
-            layout
-            transition={{ type: "spring", stiffness: 500, damping: 30 }}
-            className={`inline-block h-5 w-5 rounded-full bg-white shadow-md transform ${theme === "dark" ? "translate-x-5" : "translate-x-1"
-              }`}
-          />
-          <span className="sr-only">Toggle dark mode</span>
-        </button> */}
+        {/* <button */}
+        {/*   onClick={toggleTheme} */}
+        {/*   aria-label="Toggle dark mode" */}
+        {/*   className="relative inline-flex h-7 w-12 items-center rounded-full bg-gray-200 dark:bg-gray-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-transparent" */}
+        {/* > */}
+        {/*   <motion.span */}
+        {/*     layout */}
+        {/*     transition={{ type: "spring", stiffness: 500, damping: 30 }} */}
+        {/*     className={`inline-block h-5 w-5 rounded-full bg-white shadow-md transform ${theme === "dark" ? "translate-x-5" : "translate-x-1" */}
+        {/*       }`} */}
+        {/*   /> */}
+        {/*   <span className="sr-only">Toggle dark mode</span> */}
+        {/* </button>  */}
 
         {/* Auth Links */}
         {!user ? (

@@ -10,6 +10,7 @@ import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import Upload from "./pages/Upload";
 import Pricing from "./pages/Pricing";
+import AssetsPage from "./pages/Assets";
 import AuthSuccess from "./pages/Auth-Success.jsx";
 import { ThemeProvider } from "./utils/theme.jsx";
 import { AppProvider } from "./contexts/AppContext";
@@ -38,6 +39,7 @@ function AppWrapper() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/upload" element={<Upload />} />
           <Route path="/pricing" element={<Pricing />} />
+          <Route path="/assets" element={<AssetsPage />} />
           <Route path="/auth-success" element={<AuthSuccess />} />
         </Routes>
       </main>

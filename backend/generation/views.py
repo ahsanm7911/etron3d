@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view, permission_classes, parser_classes
+from rest_framework.views import APIView
 from adrf.decorators import api_view as adrf_api_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -115,6 +116,8 @@ async def image_to_3d_placeholder_view(request):
             {"detail": "Failed to get image token."},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
+    generated.image_token = image_token
+    await sync_to_async(generated.save)(update_fields=["image_token"])
 
     output_folder = os.path.join(settings.MEDIA_ROOT, "models", str(user.id))
 
@@ -137,11 +140,12 @@ async def image_to_3d_placeholder_view(request):
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
-    if model_path:
+    if model_path and task_id:
         print(f"MODEL_PATH: {model_path}")
         # Add the model_path to generated_model
+        generated.task_id = task_id
         generated.model_file = model_path
-        await sync_to_async(generated.save)(update_fields=["model_file"])
+        await sync_to_async(generated.save)(update_fields=["model_file", "task_id"])
         # Deduct user credits
         user.credits -= 10
         await sync_to_async(user.save)()
@@ -188,3 +192,40 @@ async def image_to_3d_placeholder_view(request):
             {"detail": "No model path received"},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
+
+
+class AssetsView(APIView):
+    """
+    GET /api/assets/
+
+    Returns the authenticated user's full generation history,
+    ordered newest first.
+
+    Response shape:
+    {
+        "total": <int>,
+        "models": [
+            {
+                "id":          <int>,
+                "status":      "pending" | "processing" | "completed" | "failed",
+                "input_image": "<url>",
+                "image_token": "<str>",
+                "task_id":     "<str>",
+                "model_file":  "<url>",
+                "created_at":  "<ISO 8601>"
+            },
+            ...
+        ]
+    }
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        qs = GeneratedModel.objects.filter(user=request.user).order_by("-created_at")
+        serializer = GeneratedModelSerializer(
+            qs,
+            many=True,
+            context={"request": request},  # enables absolute URLs for FileFields
+        )
+        return Response({"total": qs.count(), "models": serializer.data})

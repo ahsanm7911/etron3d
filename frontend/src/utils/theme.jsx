@@ -6,7 +6,7 @@ import React, { createContext, useState, useEffect } from "react";
  * and a toggle function to switch between them.
  */
 export const ThemeContext = createContext({
-  theme: "light",
+  theme: "dark",
   toggleTheme: () => {},
 });
 
