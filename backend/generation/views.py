@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view, permission_classes, parser_classes
+from adrf.decorators import api_view as adrf_api_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
@@ -10,8 +11,10 @@ from users.serializers import UserSerializer
 from .serializers import UploadedImageSerializer, GeneratedModelSerializer
 from django.conf import settings
 import os
+import shutil
 import base64
-from .services import generator
+from pathlib import Path
+from .services import generator, tripo_generator
 
 # Create your views here.
 GENERATION_COST = settings.MODEL_GENERATION_COST
@@ -59,9 +62,9 @@ def upload_image_view(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(["POST"])
+@adrf_api_view(["POST"])
 @permission_classes([IsAuthenticated])
-def image_to_3d_placeholder_view(request):
+async def image_to_3d_placeholder_view(request):
     """
     Handle image-to-3D generation requests with placeholder logic.
 
@@ -74,6 +77,9 @@ def image_to_3d_placeholder_view(request):
     The 3D processing itself is NOT real yet; it simply attaches a fixed
     placeholder .glb/.obj file placed in MEDIA_ROOT/models/.
     """
+
+    from asgiref.sync import sync_to_async
+
     user = request.user
     if user.credits < GENERATION_COST:
         return Response(
@@ -82,7 +88,7 @@ def image_to_3d_placeholder_view(request):
         )
 
     image = request.FILES.get("image")
-    image = file_to_base64(image)
+    # image = file_to_base64(image)
 
     if not image:
         return Response(
@@ -90,9 +96,40 @@ def image_to_3d_placeholder_view(request):
             status=status.HTTP_400_BAD_REQUEST,
         )
 
-    """
+    generated = await sync_to_async(GeneratedModel.objects.create)(
+        user=user, input_image=image, status="processing"
+    )
+
+    await sync_to_async(generated.save)()
     try:
-        generation_request_response = generator.request_generation_by_image(image)
+        image = os.path.join(settings.MEDIA_ROOT, generated.input_image.url)[1:]
+        shutil.copy2(image, Path(settings.BASE_DIR) / "temp.png")
+        print("Copying done.")
+    except Exception as e:
+        print(f"Failed to copy: {e}")
+    # Upload image and get token
+    image_token = await tripo_generator.get_image_token(image)
+    print(f"IMAGE_TOKEN: {image_token}")
+    if not image_token:
+        return Response(
+            {"detail": "Failed to get image token."},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+    output_folder = os.path.join(settings.MEDIA_ROOT, "models", str(user.id))
+
+    if not os.path.exists(output_folder):
+        print(f"Folder {output_folder} doesn't exists, creating....")
+        os.makedirs(output_folder)
+        print(f"Folder {output_folder} created.")
+
+    try:
+        generator_response = await tripo_generator.image_to_model_example(
+            image=image_token, output_path=output_folder
+        )
+        # model_path = await tripo_generator.get_model_files(task_id, output_folder)
+        print(f"GENERATOR RESPONSE: {generator_response}")
+        task_id, model_path = generator_response
     except Exception as e:
         print(f"Generation Error: {e}")
         return Response(
@@ -100,48 +137,54 @@ def image_to_3d_placeholder_view(request):
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
-    task_id = generation_request_response["task_id"]
-    """
-    # Create the GeneratedModel with the input image
-    generated = GeneratedModel.objects.create(
-        user=user,
-        input_image=image,
-        status="completed",  # since it's placeholder for now
-    )
+    if model_path:
+        print(f"MODEL_PATH: {model_path}")
+        # Add the model_path to generated_model
+        generated.model_file = model_path
+        await sync_to_async(generated.save)(update_fields=["model_file"])
+        # Deduct user credits
+        user.credits -= 10
+        await sync_to_async(user.save)()
 
-    # Deduct user credits
-    user.credits -= 10
-    user.save()
+        # Attach placeholder 3D file (you must put this file in MEDIA_ROOT/models/)
+        placeholder_rel_path = model_path.split("backend")[-1].split("media")[-1][1:]
+        placeholder_abs_path = os.path.join(settings.MEDIA_ROOT, placeholder_rel_path)
 
-    # Attach placeholder 3D file (you must put this file in MEDIA_ROOT/models/)
-    placeholder_rel_path = "models/placeholder3.glb"  # or .obj, etc.
-    placeholder_abs_path = os.path.join(settings.MEDIA_ROOT, placeholder_rel_path)
+        # Make sure the placeholder file exists in your MEDIA_ROOT/models directory
+        if os.path.exists(placeholder_abs_path):
+            generated.model_file.name = placeholder_rel_path
+            generated.status = "completed"
+            await sync_to_async(generated.save)(update_fields=["model_file", "status"])
+        else:
+            # If placeholder is missing, indicate failure
+            generated.status = "failed"
+            await sync_to_async(generated.save)(update_fields=["status"])
+            return Response(
+                {"detail": "Placeholder 3D file not found on server."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
-    # Make sure the placeholder file exists in your MEDIA_ROOT/models directory
-    if os.path.exists(placeholder_abs_path):
-        generated.model_file.name = placeholder_rel_path
-        generated.save(update_fields=["model_file"])
-    else:
-        # If placeholder is missing, indicate failure
-        generated.status = "failed"
-        generated.save(update_fields=["status"])
+        serializer = await sync_to_async(GeneratedModelSerializer)(
+            generated, context={"request": request}
+        )
+        user_serializer = await sync_to_async(UserSerializer)(user)
+
+        serialized_data = await sync_to_async(lambda: serializer.data)()
+        serialized_user = await sync_to_async(lambda: user_serializer.data)()
+        # Also return a direct URL convenience key
+        file_url = request.build_absolute_uri(generated.model_file.url)
+
         return Response(
-            {"detail": "Placeholder 3D file not found on server."},
+            {
+                "detail": "3D model generated (placeholder).",
+                "data": serialized_data,
+                "file_url": file_url,
+                "user": serialized_user,
+            },
+            status=status.HTTP_201_CREATED,
+        )
+    else:
+        return Response(
+            {"detail": "No model path received"},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
-
-    serializer = GeneratedModelSerializer(generated, context={"request": request})
-    user_serializer = UserSerializer(user)
-
-    # Also return a direct URL convenience key
-    file_url = request.build_absolute_uri(generated.model_file.url)
-
-    return Response(
-        {
-            "detail": "3D model generated (placeholder).",
-            "data": serializer.data,
-            "file_url": file_url,
-            "user": user_serializer.data,
-        },
-        status=status.HTTP_201_CREATED,
-    )

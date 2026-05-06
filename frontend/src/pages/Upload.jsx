@@ -88,7 +88,9 @@ export default function Upload() {
             const res = await api.post("/generation/image-to-3d/", formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
-            setUser(res.data.user);
+            if (res.data.user) {
+              setUser(res.data.user);
+            }
             setProgress(100);
             console.log("FILE_URL: ", res.data.file_url);
             setResultFile(res.data.file_url || res.data.data?.model_file);
@@ -158,7 +160,7 @@ export default function Upload() {
                 whileHover={!loading && file ? { scale: 1.05 } : {}}
                 onClick={handleUpload}
                 disabled={!file || loading}
-                className="mt-8 px-10 py-3 rounded-full text-lg font-semibold text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed shadow-lg"
+                className="mt-8 mb-6 px-10 py-3 rounded-full text-lg font-semibold text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed shadow-lg"
             >
                 {loading ? "Processing…" : "Generate 3D Model"}
             </motion.button>
@@ -173,7 +175,7 @@ export default function Upload() {
                         />
                     </div>
                     <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                        Generating placeholder model…
+                        Generating model…
                     </p>
                 </div>
             )}
