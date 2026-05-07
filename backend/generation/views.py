@@ -147,7 +147,7 @@ async def image_to_3d_placeholder_view(request):
         generated.model_file = model_path
         await sync_to_async(generated.save)(update_fields=["model_file", "task_id"])
         # Deduct user credits
-        user.credits -= 10
+        user.credits -= 30
         await sync_to_async(user.save)()
 
         # Attach placeholder 3D file (you must put this file in MEDIA_ROOT/models/)

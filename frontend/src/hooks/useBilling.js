@@ -1,15 +1,22 @@
 // src/hooks/useBilling.js
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import api from '../utils/api'; // your existing axios instance with JWT headers
+import { AppContext } from '../contexts/AppContext';
 
 export function useBilling() {
   const [bLoading, setBLoading] = useState(false);
   const [bError, setBError]     = useState(null);
+  const { user } = useContext(AppContext);
 
   const subscribe = async (plan) => {
     setBLoading(true);
     setBError(null);
+    
     try {
+      if (!user) {
+      alert("You must be logged in to subscribe!");
+      return;
+    } 
       const { data } = await api.post('/billing/checkout/', { plan });
       window.location.href = data.checkout_url; // redirect to Stripe
     } catch (err) {

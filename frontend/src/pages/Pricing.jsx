@@ -81,7 +81,7 @@ export default function Pricing() {
                     <p className="text-4xl font-extrabold mb-6">${prices[billing].free}</p>
                     <button className="my-6 w-full py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition" onClick={() => navigate('/login')}>Get Started</button>
                     <ul className="text-sm text-left space-y-3">
-                        <li>✔ 10 Credits / month</li>
+                        <li>✔ 50 Credits / month</li>
                         <li>✔ Standard Queue Speed</li>
                         <li>✔ 5 Downloads / month</li>
                         <li>✔ Community Support</li>
@@ -96,7 +96,7 @@ export default function Pricing() {
                     <button className="my-6 w-full py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition"
                         onClick={() => subscribe('pro')} disabled={bLoading}>{bLoading ? 'Redirecting...' : 'Upgrade to Pro'}</button>
                     <ul className="text-sm text-left space-y-3">
-                        <li>✔ 150 Credits / month</li>
+                        <li>✔ 500 Credits / month</li>
                         <li>✔ Faster Queue Priority</li>
                         <li>✔ Unlimited Downloads</li>
                         <li>✔ Email Support</li>
@@ -113,7 +113,7 @@ export default function Pricing() {
                     disabled={bLoading}
                     >{bLoading ? 'Redirecting...' : 'Upgrade to Studio'}</button>
                     <ul className="text-sm text-left space-y-3">
-                        <li>✔ 500 Credits / month</li>
+                        <li>✔ 7000 Credits / month</li>
                         <li>✔ High Priority Queue</li>
                         <li>✔ Unlimited Downloads</li>
                         <li>✔ Dedicated Support</li>

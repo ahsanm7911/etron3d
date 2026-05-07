@@ -69,7 +69,7 @@ export default function Navbar() {
       </div>
       ) : (
         <div className="hidden md:flex items-center gap-8 text-sm font-medium">
-            <Link to="/assets" className="hover:text-blue-500 transition">Your Assets</Link>
+            <Link to="/assets" className="hover:text-blue-500 transition">My Assets</Link>
         </div>
       )}
 

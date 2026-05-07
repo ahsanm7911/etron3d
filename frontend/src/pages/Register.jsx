@@ -1,13 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import api from "../utils/api";
 import { auth } from "../utils/auth";
 import { FaBeer } from 'react-icons/fa'
 import { FcGoogle } from "react-icons/fc";
+import { AppContext } from '../contexts/AppContext';
 
 export default function Register() {
     const navigate = useNavigate();
+    const { user, setUser } = useContext(AppContext);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [password2, setPassword2] = useState("");
@@ -24,10 +26,17 @@ export default function Register() {
         try {
             const res = await api.post("/auth/register/", { email, password });
             auth.saveTokens(res.data.tokens.access, res.data.tokens.refresh);
-            auth.saveUser(res.data.user);
+            setUser(res.data.user);
             navigate("/dashboard");
         } catch (err) {
-            setError("Unable to register. Email may already be in use.");
+            console.log(err)
+            let errors = [];
+            if (err.response.data.email) {
+              errors = err.response.data.email;
+            } else if (err.response.data.password) {
+              errors = err.response.data.password;
+            } 
+            setError(errors[0]);
         }
     }
 

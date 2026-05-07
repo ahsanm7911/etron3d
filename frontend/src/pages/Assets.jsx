@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { AppContext } from '../contexts/AppContext';
+import ModelViewer from '../components/ModelViewerGLTF';
 import api from '../utils/api';
 
 const STATUS_META = {
@@ -29,7 +30,96 @@ const STATUS_META = {
 
 const FILTERS = ['all', 'completed', 'processing', 'pending', 'failed'];
 
-function ModelCard({ model, index }) {
+function PreviewModal({ model, onClose }) {
+  // Close on Escape key
+  useEffect(() => {
+    const handler = (e) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [onClose]);
+
+  const formattedDate = new Date(model.created_at).toLocaleDateString('en-US', {
+    year: 'numeric', month: 'short', day: 'numeric',
+  });
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.2 }}
+        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+        onClick={onClose}
+      >
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95, y: 16 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.95, y: 16 }}
+          transition={{ duration: 0.25, ease: 'easeOut' }}
+          className="relative w-full max-w-3xl bg-gray-900 border border-gray-700/60 rounded-2xl overflow-hidden shadow-2xl"
+          onClick={e => e.stopPropagation()}
+        >
+          {/* Modal header */}
+          <div className="flex items-center justify-between px-5 py-4 border-b border-gray-700/60">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-blue-600/20 border border-blue-600/30 flex items-center justify-center">
+                <svg className="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+                    d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" />
+                </svg>
+              </div>
+              <div>
+                <h2 className="text-sm font-semibold text-gray-100">
+                  Asset #{String(model.id).padStart(4, '0')}
+                </h2>
+                <p className="text-xs text-gray-500">{formattedDate}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              {/* Download button in modal */}
+              {model.model_file && (
+                <a
+                  href={model.model_file}
+                  download
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg text-xs font-medium text-gray-300 transition-colors"
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                  </svg>
+                  Download .glb
+                </a>
+              )}
+
+              {/* Close button */}
+              <button
+                onClick={onClose}
+                className="p-1.5 rounded-lg text-gray-500 hover:text-gray-200 hover:bg-gray-800 transition-colors"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          {/* Viewer */}
+          <div className="p-4">
+            <ModelViewer
+              url={model.model_file}
+              autoRotate={true}
+              backgroundColor="#111827"
+              style={{ height: 480, borderRadius: '0.75rem' }}
+            />
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
+function ModelCard({ model, index, onPreview }) {
   const meta = STATUS_META[model.status] ?? STATUS_META.pending;
   const [imgError, setImgError] = useState(false);
 
@@ -79,19 +169,28 @@ function ModelCard({ model, index }) {
           {meta.label}
         </div>
 
-        {/* Download button appears on hover */}
+        {/* Action buttons appear on hover */}
         {model.status === 'completed' && model.model_file && (
-          <div className="absolute bottom-3 left-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="absolute bottom-3 left-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex gap-2">
+            <button
+              onClick={() => onPreview(model)}
+              className="flex items-center justify-center gap-1.5 flex-1 py-2 rounded-xl bg-gray-800/90 hover:bg-gray-700 border border-gray-600 text-white text-sm font-semibold transition-colors backdrop-blur-sm"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.069A1 1 0 0121 8.868V15.13a1 1 0 01-1.447.894L15 14m0 0V10m0 4H5a2 2 0 01-2-2V8a2 2 0 012-2h10v8z" />
+              </svg>
+              Preview
+            </button>
             <a
               href={model.model_file}
               download
-              className="flex items-center justify-center gap-2 w-full py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold transition-colors"
+              className="flex items-center justify-center gap-1.5 flex-1 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold transition-colors"
               onClick={e => e.stopPropagation()}
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
               </svg>
-              Download .glb
+              Download
             </a>
           </div>
         )}
@@ -149,6 +248,8 @@ export default function AssetsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortOrder, setSortOrder] = useState('newest');
 
+  const [previewModel, setPreviewModel] = useState(null);
+
   const fetchModels = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -157,12 +258,10 @@ export default function AssetsPage() {
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
       });
-      console.log("RAW RESPONSE: ", res)
-      if (res.status !== 200) throw new Error(`Server error: ${res.status}`);
+      if (res.status != 200) throw new Error(`Server error: ${res.status}`);
       const data = res.data;
       setModels(data.models ?? []);
     } catch (err) {
-      console.log("ERR: ", err)
       setError(err.message);
     } finally {
       setLoading(false);
@@ -378,7 +477,7 @@ export default function AssetsPage() {
               className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5"
             >
               {filtered.map((model, i) => (
-                <ModelCard key={model.id} model={model} index={i} />
+                <ModelCard key={model.id} model={model} index={i} onPreview={setPreviewModel} />
               ))}
             </motion.div>
           </AnimatePresence>
@@ -391,6 +490,11 @@ export default function AssetsPage() {
           </p>
         )}
       </div>
+
+      {/* Preview modal */}
+      {previewModel && (
+        <PreviewModal model={previewModel} onClose={() => setPreviewModel(null)} />
+      )}
     </div>
   );
 }
