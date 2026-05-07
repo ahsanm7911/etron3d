@@ -42,6 +42,7 @@ venv.bak/
 */migrations/
 */migrations/__pycache__/
 *migrations/*
+migratios/
 
 # Coverage and testing
 .coverage
