@@ -78,6 +78,8 @@ async def image_to_3d_placeholder_view(request):
     The 3D processing itself is NOT real yet; it simply attaches a fixed
     placeholder .glb/.obj file placed in MEDIA_ROOT/models/.
     """
+    image = request.FILES.get("image")
+    # image = file_to_base64(image)
 
     from asgiref.sync import sync_to_async
 
@@ -87,9 +89,6 @@ async def image_to_3d_placeholder_view(request):
             {"detail": "Insufficient credits. Please upgrade your plan."},
             status=status.HTTP_402_PAYMENT_REQUIRED,
         )
-
-    image = request.FILES.get("image")
-    # image = file_to_base64(image)
 
     if not image:
         return Response(

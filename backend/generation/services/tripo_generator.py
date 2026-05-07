@@ -7,15 +7,16 @@ from pathlib import Path
 
 load_dotenv()
 
-key = os.getenv("TRIPO_API_KEY")
+key = os.getenv("GOOGLE_AUTH_KEY")
 
 
 async def image_to_model_example(image: str | Path, output_path: str | Path):
+    print(f"KEY: {key}")
     print("Calling tripo generator service.")
     print(f"IMAGE Inside service: {str(image)[:1000]}...")
     output_path = Path(output_path)
 
-    async with TripoClient() as client:
+    async with TripoClient(api_key=key) as client:
         try:
             # 1. Create task
             task_id = await client.image_to_model(image=image)
@@ -56,7 +57,7 @@ async def image_to_model_example(image: str | Path, output_path: str | Path):
 
 
 async def get_model_files(task_id, output_folder):
-    async with TripoClient() as client:
+    async with TripoClient(api_key=key) as client:
         task = await client.get_task(task_id)
 
         download_files = await client.download_task_models(task, output_folder)
@@ -73,7 +74,7 @@ async def get_image_token(image):
     print(f"IMAGE value in image_token_func: {image}")
     if image.startswith(":"):
         image = image[2:]
-    async with TripoClient() as client:
+    async with TripoClient(api_key=key) as client:
         file_token = await client.upload_file(image)
         return file_token["file_token"]
 
