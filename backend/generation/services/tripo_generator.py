@@ -70,6 +70,7 @@ async def get_model_files(task_id, output_folder):
 
 
 async def get_image_token(image):
+    print(f"IMAGE value in image_token_func: {image}")
     async with TripoClient() as client:
         file_token = await client.upload_file(image)
         return file_token["file_token"]

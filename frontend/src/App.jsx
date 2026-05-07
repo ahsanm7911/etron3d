@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import AnnouncementHeader from "./components/AnnouncementHeader.jsx";
@@ -13,17 +13,18 @@ import Pricing from "./pages/Pricing";
 import AssetsPage from "./pages/Assets";
 import AuthSuccess from "./pages/Auth-Success.jsx";
 import { ThemeProvider } from "./utils/theme.jsx";
-import { AppProvider } from "./contexts/AppContext";
+import { AppContext, AppProvider } from "./contexts/AppContext";
 import { auth } from "./utils/auth.jsx";
 
 
 // Wrapper to handle navbar condition using useLocation
 function AppWrapper() {
   const location = useLocation();
+  const { user } = useContext(AppContext);
   const hideNavbarRoutes = ["/login", "/register"];
   const shouldShowNavbar = !hideNavbarRoutes.includes(location.pathname);
   const shouldShowFooter = !hideNavbarRoutes.includes(location.pathname);
-  const showAnnBanner = location.pathname === "/dashboard";
+  const showAnnBanner = user?.subscription.plan == "free" && location.pathname === "/dashboard";
   const isLoggedIn = auth.getUser() ? true : false
 
   return (

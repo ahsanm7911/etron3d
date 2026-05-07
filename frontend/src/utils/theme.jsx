@@ -17,10 +17,7 @@ export const ThemeContext = createContext({
  * - Applies/removes `dark` class on the <html> element
  */
 export function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState(() => {
-    const stored = localStorage.getItem("theme");
-    return stored === "dark" ? "dark" : "light";
-  });
+  const [theme, setTheme] = useState("dark");
 
   useEffect(() => {
     const root = document.documentElement;
