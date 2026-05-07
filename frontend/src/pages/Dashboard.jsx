@@ -118,19 +118,19 @@ export default function Dashboard() {
                 <h2 className="text-3xl font-bold text-center mb-10">Your Activity</h2>
                 <div className="grid sm:grid-cols-3 gap-6">
                     <motion.div whileHover={{ scale: 1.05 }} className="p-6 bg-white dark:bg-gray-900 rounded-xl shadow border border-gray-200 dark:border-gray-700 text-center">
-                        <h3 className="text-4xl font-extrabold text-blue-600 mb-2">12</h3>
+                        <h3 className="text-4xl font-extrabold text-blue-600 mb-2">0</h3>
                         <p className="text-sm text-gray-500 dark:text-gray-400">3D Models Generated</p>
                     </motion.div>
 
 
                     <motion.div whileHover={{ scale: 1.05 }} className="p-6 bg-white dark:bg-gray-900 rounded-xl shadow border border-gray-200 dark:border-gray-700 text-center">
-                        <h3 className="text-4xl font-extrabold text-purple-600 mb-2">45</h3>
+                        <h3 className="text-4xl font-extrabold text-purple-600 mb-2">0</h3>
                         <p className="text-sm text-gray-500 dark:text-gray-400">Images Created</p>
                     </motion.div>
 
 
                     <motion.div whileHover={{ scale: 1.05 }} className="p-6 bg-white dark:bg-gray-900 rounded-xl shadow border border-gray-200 dark:border-gray-700 text-center">
-                        <h3 className="text-4xl font-extrabold text-green-600 mb-2">8</h3>
+                        <h3 className="text-4xl font-extrabold text-green-600 mb-2">0</h3>
                         <p className="text-sm text-gray-500 dark:text-gray-400">Downloads This Month</p>
                     </motion.div>
                 </div>

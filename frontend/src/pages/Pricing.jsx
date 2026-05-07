@@ -57,20 +57,20 @@ export default function Pricing() {
 
 
             {/* Billing Toggle */}
-            <div className="mt-10 flex justify-center items-center gap-4">
-                <span className={billing === "monthly" ? "font-bold" : "opacity-60"}>Monthly</span>
-                <button
-                    onClick={() => setBilling(billing === "monthly" ? "yearly" : "monthly")}
-                    className="relative inline-flex h-7 w-14 items-center rounded-full bg-gray-300 dark:bg-gray-700"
-                >
-                    <motion.span
-                        className="h-6 w-6 rounded-full bg-white shadow"
-                        animate={{ x: billing === "yearly" ? 32 : 2 }}
-                        transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                    />
-                </button>
-                <span className={billing === "yearly" ? "font-bold" : "opacity-60"}>Yearly</span>
-            </div>
+            {/* <div className="mt-10 flex justify-center items-center gap-4"> */}
+            {/*     <span className={billing === "monthly" ? "font-bold" : "opacity-60"}>Monthly</span> */}
+            {/*     <button */}
+            {/*         onClick={() => setBilling(billing === "monthly" ? "yearly" : "monthly")} */}
+            {/*         className="relative inline-flex h-7 w-14 items-center rounded-full bg-gray-300 dark:bg-gray-700" */}
+            {/*     > */}
+            {/*         <motion.span */}
+            {/*             className="h-6 w-6 rounded-full bg-white shadow" */}
+            {/*             animate={{ x: billing === "yearly" ? 32 : 2 }} */}
+            {/*             transition={{ type: "spring", stiffness: 500, damping: 30 }} */}
+            {/*         /> */}
+            {/*     </button> */}
+            {/*     <span className={billing === "yearly" ? "font-bold" : "opacity-60"}>Yearly</span> */}
+            {/* </div> */}
 
 
             {/* Pricing Grid */}
