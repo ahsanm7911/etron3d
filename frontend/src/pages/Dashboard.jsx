@@ -1,41 +1,11 @@
-import React, { useEffect, useContext, useState, useCallback } from 'react';
+import React, { useContext } from 'react';
 import { motion } from 'framer-motion';
-import { Link, useSearchParams } from 'react-router-dom';
-import { useBilling } from '../hooks/useBilling';
+import { Link } from 'react-router-dom';
 import { AppContext } from '../contexts/AppContext';
-import UpgradeSuccessModal from '../components/UpgradeSuccessModal';
 
 export default function Dashboard() {
-  const { user, setUser } = useContext(AppContext);
+  const { user } = useContext(AppContext);
   const username = user.email.split('@')[0];
-  const [searchParams, setSearchParams] = useSearchParams();
-  const { fetchStatus } = useBilling();
-  const [showModal, setShowModal] = useState(false);
-    
-  const handleClose = useCallback(() => {
-    setShowModal(false);
-    setSearchParams({});
-  }, [setSearchParams]);
-
-    useEffect(() => {
-    if (searchParams.get('payment') !== 'success') return;
-
-    // Poll up to 5 times every 2s to wait for the webhook to fire
-    let attempts = 0;
-    const interval = setInterval(async () => {
-      attempts++;
-      try {
-        const data = await fetchStatus();
-        setUser(data);          // refresh user in context
-        setShowModal(true);     // show popover with fresh data
-        clearInterval(interval);
-      } catch {
-        if (attempts >= 5) clearInterval(interval);
-      }
-    }, 2000);
-
-    return () => clearInterval(interval);
-  }, []);    
 
     const notImplemented = async () => {
         alert("This feature is yet to be implemeted.");
@@ -135,13 +105,6 @@ export default function Dashboard() {
                     </motion.div>
                 </div>
             </section>
-        {showModal && (
-          <UpgradeSuccessModal
-            plan={user?.subscription?.plan}
-            credits={user?.subscription?.credits_remaining}
-            onClose={handleClose}
-          />
-        )}
         </div>
     );
 }

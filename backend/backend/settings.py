@@ -16,25 +16,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Stripe
-STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY")
-STRIPE_PUBLISHABLE_KEY = os.environ.get("STRIPE_PUBLISHABLE_KEY")
-STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET")
-
-STRIPE_PRICE_IDS = {
-    "free": os.environ.get("STRIPE_PRICE_FREE"),
-    "pro": os.environ.get("STRIPE_PRICE_PRO"),
-    "studio": os.environ.get("STRIPE_PRICE_STUDIO"),
-    "enterprise": os.environ.get("STRIPE_PRICE_ENTERPRISE"),
-}
-
-PLAN_CREDITS = {
-    "free": int(os.environ.get("CREDITS_FREE", 10)),
-    "pro": int(os.environ.get("CREDITS_PRO", 100)),
-    "studio": int(os.environ.get("CREDITS_STUDIO", 500)),
-    "enterprise": int(os.environ.get("CREDITS_ENTERPRISE", 2000)),
-}
-
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:5173")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -68,7 +49,6 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt.token_blacklist",
     "users",
     "generation",
-    "billing",
 ]
 
 MIDDLEWARE = [
@@ -178,17 +158,3 @@ SIMPLE_JWT = {
     "ALGORITHM": "HS256",
     "SIGNING_KEY": SECRET_KEY,
 }
-GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
-GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
-GOOGLE_REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI")
-
-MODEL_GENERATION_COST = 30
-
-STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
-STRIPE_PUBLISHABLE_KEY = os.getenv(
-    "STRIPE_PUBLISHABLE_KEY", "pk_test_dummy_publishable"
-)
-STRIPE_SUCCESS_URL = (
-    "http://localhost:5173/dashboard?status=success"  # React success redirect
-)
-STRIPE_CANCEL_URL = "http://localhost:5173/pricing?status=cancelled"

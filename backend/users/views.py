@@ -1,7 +1,3 @@
-import requests
-from django.http import JsonResponse, HttpResponseRedirect
-from django.conf import settings
-from django.contrib.auth import login
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -21,8 +17,6 @@ from .serializers import (
     PasswordResetRequestSerializer,
     PasswordResetSerializer,
 )
-
-from .auth import verify_google_token
 
 User = get_user_model()
 
@@ -72,70 +66,6 @@ def login_view(request):
     tokens = get_tokens_for_user(user)
     return Response({"user": UserSerializer(user).data, "tokens": tokens})
 
-
-# ----------------------- Google Login -----------------------
-def google_login_view(request):
-    print("Google client id: ", settings.GOOGLE_CLIENT_ID)
-    print("Google redirect uri: ", settings.GOOGLE_REDIRECT_URI)
-    google_auth_url = (
-        "https://accounts.google.com/o/oauth2/v2/auth"
-        "?response_type=code"
-        f"&client_id={settings.GOOGLE_CLIENT_ID}"
-        f"&redirect_uri={settings.GOOGLE_REDIRECT_URI}"
-        "&scope=openid%20email%20profile"
-    )
-    return HttpResponseRedirect(google_auth_url)
-
-def google_callback_view(request):
-    code = request.GET.get("code")
-
-    if not code:
-        return JsonResponse({"error": "No code provided"}, status=status.HTTP_400_BAD_REQUEST)
-
-    token_url = "https://oauth2.googleapis.com/token"
-    data = {
-        "code": code,
-        "client_id": settings.GOOGLE_CLIENT_ID,
-        "client_secret": settings.GOOGLE_CLIENT_SECRET,
-        "redirect_uri": settings.GOOGLE_REDIRECT_URI,
-        "grant_type": "authorization_code",
-    }
-
-    token_res = requests.post(token_url, data=data).json()
-
-    if "access_token" not in token_res:
-        return JsonResponse({"error": "Failed to retrieve access token", "details": token_res}, status=status.HTTP_400_BAD_REQUEST)
-
-
-    access_token = token_res.get("access_token")
-
-    # fetch user info
-    user_info = requests.get(
-        "https://www.googleapis.com/oauth2/v2/userinfo",
-        headers={"Authorization": f"Bearer {access_token}"}
-    ).json()
-
-    email = user_info.get('email')
-    name = user_info.get('name', '')
-
-    if not email:
-        return JsonResponse({'error': "Google account has not email."}, status=status.HTTP_400_BAD_REQUEST)
-    
-    user, created = User.objects.get_or_create(
-        email=email, 
-        defaults={
-            'email': email,
-            'first_name': name.split()[0] if name else "",
-            'last_name': " ".join(name.split()[1:]) if name and len(name.split()) > 1 else "",
-        }
-    )
-
-    # Login the user (django session)
-    login(request, user)
-
-    token = get_tokens_for_user(user)['access']
-    return HttpResponseRedirect(f"http://localhost:5173/auth-success?token={token}")
-    
 
 # ----------------------- Logout -----------------------
 @api_view(["POST"])

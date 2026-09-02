@@ -250,7 +250,7 @@ export default function Upload() {
                 <p className="text-xs text-gray-500 leading-relaxed">
                     I confirm that I own the rights to this image or have permission to use it, and I agree to the{' '}
                     <a href="/terms" className="text-blue-400 hover:text-blue-300 underline underline-offset-2" onClick={e => e.stopPropagation()}>Terms of Service</a>.
-                    Generated models are for personal or commercial use within the bounds of my current plan.
+                    Generated models are free to use for personal or commercial projects.
                 </p>
             </motion.label>
 

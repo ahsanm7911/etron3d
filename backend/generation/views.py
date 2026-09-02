@@ -18,7 +18,6 @@ from pathlib import Path
 from .services import generator, tripo_generator
 
 # Create your views here.
-GENERATION_COST = settings.MODEL_GENERATION_COST
 
 
 def file_to_base64(file):
@@ -84,11 +83,6 @@ async def image_to_3d_placeholder_view(request):
     from asgiref.sync import sync_to_async
 
     user = request.user
-    if user.credits < GENERATION_COST:
-        return Response(
-            {"detail": "Insufficient credits. Please upgrade your plan."},
-            status=status.HTTP_402_PAYMENT_REQUIRED,
-        )
 
     if not image:
         return Response(
@@ -145,9 +139,6 @@ async def image_to_3d_placeholder_view(request):
         generated.task_id = task_id
         generated.model_file = model_path
         await sync_to_async(generated.save)(update_fields=["model_file", "task_id"])
-        # Deduct user credits
-        user.credits -= 30
-        await sync_to_async(user.save)()
 
         # Attach placeholder 3D file (you must put this file in MEDIA_ROOT/models/)
         placeholder_rel_path = model_path.split("backend")[-1].split("media")[-1][1:]

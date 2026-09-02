@@ -18,8 +18,6 @@ export default function Navbar() {
   const navigate = useNavigate();
   const { user, setUser } = useContext(AppContext);
   const username = user ? user?.email.split('@')[0] : "";
-  const credits = user ? user?.subscription.credits_remaining : "";
-  const plan = user ? user?.subscription.plan.toUpperCase() : "";
 
 
   const handleLogout = () => {
@@ -62,7 +60,6 @@ export default function Navbar() {
 
       <div className="hidden md:flex items-center gap-8 text-sm font-medium">
         <a href="#features" className="hover:text-blue-500 transition">Features</a>
-        <Link to="/pricing" className="hover:text-blue-500 transition">Pricing</Link>
         <a href="#solutions" className="hover:text-blue-500 transition">Solutions</a>
         <a href="#community" className="hover:text-blue-500 transition">Community</a>
         <a href="#resources" className="hover:text-blue-500 transition">Resources</a>
@@ -76,7 +73,6 @@ export default function Navbar() {
 
       {/* <div className="hidden md:flex items-center gap-8 text-sm font-medium mr-6">
         <a href="#features" className="hover:text-blue-500 transition">Features</a>
-        <a href="#pricing" className="hover:text-blue-500 transition">Pricing</a>
         <a href="#solutions" className="hover:text-blue-500 transition">Solutions</a>
         <a href="#community" className="hover:text-blue-500 transition">Community</a>
         <a href="#resources" className="hover:text-blue-500 transition">Resources</a>
@@ -118,9 +114,6 @@ export default function Navbar() {
           </div>
         ) : (
           <div className="flex items-center gap-3">
-            <div className="px-3 py-1.5 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-sm font-semibold shadow">
-              {credits} Credits
-            </div>
             <div className="relative">
               <button onClick={() => setOpen(!open)} className="h-9 w-9 rounded-full bg-gray-300 dark:bg-gray-700 flex items-center justify-center text-sm font-bold cursor-pointer">
                 {user.email ? user.email.charAt(0).toUpperCase() : "U"}
@@ -129,14 +122,12 @@ export default function Navbar() {
 
               {/* Dropdown */}
               <div className={`absolute right-0 mt-2 w-40 bg-white dark:bg-gray-800 rounded-lg shadow-lg opacity-0 transition ${open ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
-                <div className="user-info px-4 py-2 flex flex-row justify-between">
+                <div className="user-info px-4 py-2">
                   <p>{username}</p>
-                  <p className="border text-yellow-400 rounded-full shadow-lg border-yellow-400 px-2 py-1 text-xs inline-block">{plan}</p>
                 </div>
                 <div className="h-px bg-gray-700 my-2"></div>
                 <ul className="text-sm text-gray-700 dark:text-gray-300 py-2">
                   <li className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">Account Settings</li>
-                  <li className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">Billing</li>
                   <li className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer text-red-500">
                     <button onClick={handleLogout}>Logout</button>
                   </li>

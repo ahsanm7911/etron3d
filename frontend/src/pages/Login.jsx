@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import api from "../utils/api";
 import { auth } from "../utils/auth";
 import { AppContext } from "../contexts/AppContext";
-import { FcGoogle } from "react-icons/fc";
 
 export default function Login() {
     const navigate = useNavigate();
@@ -32,11 +31,6 @@ export default function Login() {
         } catch (err) {
             setError("Invalid email or password.");
         }
-    }
-
-    function handleGoogleLogin() {
-        // Redirect to backend Google OAuth endpoint
-        window.location.href = `http://localhost:8000/api/auth/google/login/`;
     }
 
     return (
@@ -78,18 +72,6 @@ export default function Login() {
                    
                     <motion.button whileTap={{ scale: 0.95 }} type="submit" className="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">Login</motion.button>
                 </form>
-                <div className="flex items-center text-gray-400 my-6">
-                    <div className="flex-1 border-t border-gray-300"></div>
-                    <span className="px-4 text-sm font-medium">or</span>
-                    <div className="flex-1 border-t border-gray-300"></div>
-                </div>
-                <button
-                    onClick={handleGoogleLogin}
-                    className="w-full py-2 bg-white text-black rounded-lg hover:bg-red-100 transition mb-4 flex flex-row items-center justify-center text-lg"
-                >
-                    <FcGoogle className="text-2xl" />
-                    <p className="mx-2">Continue with Google</p>
-                </button>
                 <p className="mt-4 text-sm text-center">Don't have an account? <Link to="/register" className="text-blue-600">Sign Up</Link></p>
             </motion.div>
         </div>

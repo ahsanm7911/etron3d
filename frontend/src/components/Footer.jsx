@@ -10,7 +10,6 @@ export default function Footer() {
                     <h3 className="font-bold mb-3 text-lg">Product</h3>
                     <ul className="space-y-2 text-sm">
                         <li><a href="#features">Features</a></li>
-                        <li><a href="#pricing">Pricing</a></li>
                         <li><a href="#solutions">Solutions</a></li>
                     </ul>
                 </div>
