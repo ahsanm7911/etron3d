@@ -7,6 +7,7 @@ import * as THREE from "three";
 import api from '../utils/api';
 import { auth } from '../utils/auth';
 import { AppContext } from '../contexts/AppContext';
+import { getErrorMessage } from '../utils/errors';
 import { useNavigate } from 'react-router-dom';
 import ModelViewer from '../components/ModelViewerGLTF.jsx';
 
@@ -95,7 +96,7 @@ export default function Upload() {
             setResultFile(res.data.file_url || res.data.data?.model_file);
 
         } catch (err) {
-            let errMsg = err.response?.data.detail || "Internal server error.";
+            const errMsg = getErrorMessage(err, "Generation failed. Please try again.");
             console.error("Upload error: ", errMsg);
             setError(errMsg);
         } finally {

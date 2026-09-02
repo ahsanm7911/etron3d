@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import api from "../utils/api";
 import { auth } from "../utils/auth";
 import { AppContext } from "../contexts/AppContext";
+import { getErrorMessage } from "../utils/errors";
 
 export default function Login() {
     const navigate = useNavigate();
@@ -29,7 +30,7 @@ export default function Login() {
             setUser(res.data.user);
             navigate("/dashboard");
         } catch (err) {
-            setError("Invalid email or password.");
+            setError(getErrorMessage(err, "Invalid email or password."));
         }
     }
 

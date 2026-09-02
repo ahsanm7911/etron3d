@@ -5,6 +5,7 @@ import api from "../utils/api";
 import { auth } from "../utils/auth";
 import { FaBeer } from 'react-icons/fa'
 import { AppContext } from '../contexts/AppContext';
+import { getErrorMessage } from '../utils/errors';
 
 export default function Register() {
     const navigate = useNavigate();
@@ -29,13 +30,7 @@ export default function Register() {
             navigate("/dashboard");
         } catch (err) {
             console.log(err)
-            let errors = [];
-            if (err.response.data.email) {
-              errors = err.response.data.email;
-            } else if (err.response.data.password) {
-              errors = err.response.data.password;
-            } 
-            setError(errors[0]);
+            setError(getErrorMessage(err));
         }
     }
 
